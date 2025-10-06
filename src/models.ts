@@ -48,8 +48,12 @@ export interface UserAlertState {
   userId: string;
   alertId: string;
   read: boolean;
+  // optional timestamp when the user marked the alert as read
+  readAt?: string | null;
   // snoozedUntilDate: 'YYYY-MM-DD' when snoozed; only valid for that day
   snoozedUntilDate?: string | null;
+  // history of dates (YYYY-MM-DD) the user snoozed this alert
+  snoozedHistory?: string[];
   lastNotifiedAt?: string | null; // ISO of last reminder
 }
 
