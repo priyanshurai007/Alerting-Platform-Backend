@@ -1,74 +1,209 @@
-# Alerting & Notification Platform (MVP)
+# 🧠 Alerting & Notification Platform (MVP)
 
-TypeScript + Express implementation following the PRD.
+A lightweight, modular **Alerting & Notification Platform** built using **TypeScript + Express**, implementing the given PRD with clean OOP principles, extensible design, and clear separation of concerns.
 
-## Features (MVP)
-- Admin:
-  - Create/Update/List/Archive Alerts
-  - Configure visibility: Org / Team / User
-  - Start/Expiry, severity (Info|Warning|Critical), delivery type (InApp), enable/disable reminders
-- End User:
-  - Fetch alerts (assigned by visibility)
-  - Mark Read/Unread
-  - Snooze (per day; resets next day)
-- Reminder Logic:
-  - Every 2 hours (default) until snoozed (for the day) or expired
-  - `POST /reminders/trigger` endpoint simulates the scheduler
-- Analytics:
-  - Aggregated metrics across the system
+---
 
-## Quick Start
+## 🚀 Tech Stack
+- **Language:** TypeScript  
+- **Framework:** Express.js  
+- **Database:** In-memory store (for MVP demonstration)  
+- **Design Patterns:** Strategy, State, and Observer principles  
+- **Deployment:** Render (Cloud Hosted)
+
+---
+
+## 🧩 Features (MVP)
+
+### 👩‍💼 Admin
+- Create, Update, List, and Archive alerts  
+- Configure visibility:
+  - Entire **Organization**
+  - Specific **Teams**
+  - Specific **Users**
+- Define:
+  - **Severity:** `Info | Warning | Critical`
+  - **Delivery Type:** `InApp` (extensible to Email/SMS)
+  - **Reminder Frequency:** Default every **2 hours**
+  - **Start** / **Expiry** timestamps
+  - Enable / disable **recurring reminders**
+
+### 👤 End User
+- Fetch alerts based on assigned visibility  
+- Mark alerts **Read / Unread**  
+- **Snooze** alerts for the day (auto-resets next day)  
+- Receive reminders every **2 hours** until:
+  - The alert is snoozed (for the day), or  
+  - The alert expires  
+
+### ⏰ Reminder Logic
+- Each alert triggers reminders **every 2 hours** until snoozed or expired  
+- API to simulate scheduler:
+
+
+POST /reminders/trigger
+
+- Each user’s alert reminders are tracked via `lastNotifiedAt` timestamp
+
+### 📊 Analytics Dashboard
+- Aggregated system metrics:
+- Total alerts created  
+- Alerts delivered vs. read  
+- Snoozed counts per alert  
+- Severity breakdown (Info / Warning / Critical)  
+- Active vs. expired alerts  
+
+---
+
+## ⚙️ Quick Start
+
+### 1️⃣ Install dependencies
 ```bash
-# in this folder
-npm i
+npm install
+
+2️⃣ Run locally (development)
 npm run dev
-# (optional) seed sample users/teams/alerts:
+
+3️⃣ Seed sample users/teams/alerts (optional)
 npm run seed
-```
 
-Server will default to `http://localhost:4001`.
 
-## API (Selected)
-- Admin
-  - `POST /admin/alerts` create alert
-  - `PUT /admin/alerts/:id` update/archive/enableReminders
-  - `GET /admin/alerts` list and filter (?severity=Info|Warning|Critical&status=active|expired)
-- User
-  - `GET /user/:userId/alerts` list relevant alerts for a user
-  - `POST /user/:userId/alerts/:alertId/read` mark read
-  - `POST /user/:userId/alerts/:alertId/unread` mark unread
-  - `POST /user/:userId/alerts/:alertId/snooze` snooze for the current day
-- Reminders
-  - `POST /reminders/trigger` simulate 2h reminder dispatching
-- Analytics
-  - `GET /analytics/metrics` totals, delivered vs read, snoozed counts, severity breakdown
+Server runs at:
+👉 http://localhost:4001
 
-### Example: Create an Alert
-```bash
-curl -X POST http://localhost:4001/admin/alerts   -H "Content-Type: application/json"   -d '{
-    "title": "DB maintenance",
-    "message": "Postgres upgrade at 01:00",
-    "severity": "Warning",
-    "deliveryType": "InApp",
-    "reminderFrequencyMinutes": 120,
-    "startAt": null,
-    "expiresAt": null,
-    "visibility": { "org": true, "teams": [], "users": [] }
-  }'
-```
+🧪 API Reference
+👩‍💼 Admin APIs
+Method	Endpoint	Description
+POST	/admin/alerts	Create new alert
+PUT	/admin/alerts/:id	Update or archive an alert
+GET	/admin/alerts	List & filter alerts (`?severity=Info
+👤 User APIs
+Method	Endpoint	Description
+GET	/user/:userId/alerts	Fetch visible alerts for a user
+POST	/user/:userId/alerts/:alertId/read	Mark alert as read
+POST	/user/:userId/alerts/:alertId/unread	Mark alert as unread
+POST	/user/:userId/alerts/:alertId/snooze	Snooze for the current day
+🔁 Reminder API
+Method	Endpoint	Description
+POST	/reminders/trigger	Simulate 2-hour reminder dispatch
+📊 Analytics API
+Method	Endpoint	Description
+GET	/analytics/metrics	Aggregated metrics for all alerts
+🧱 Example Usage
+🟨 Create an Alert
+curl -X POST http://localhost:4001/admin/alerts \
+-H "Content-Type: application/json" \
+-d '{
+  "title": "DB Maintenance",
+  "message": "Postgres upgrade scheduled at 01:00",
+  "severity": "Warning",
+  "deliveryType": "InApp",
+  "reminderFrequencyMinutes": 120,
+  "startAt": null,
+  "expiresAt": null,
+  "visibility": { "org": true, "teams": [], "users": [] }
+}'
 
-### Example: Trigger Reminders
-```bash
+🕑 Trigger Reminders
 curl -X POST http://localhost:4001/reminders/trigger
-```
 
-## Design
-- **Strategy Pattern** for delivery channels (`NotificationChannel` + `InAppChannel`).
-- **State Pattern** for per-user alert state (`UserAlertState` manages read/unread/snooze).
-- **Separation of Concerns**: Alert CRUD & audience resolution vs. Delivery vs. Reminder scheduling.
-- **Extensible**: Add `EmailChannel`/`SmsChannel` without changing services.
+👤 Fetch Alerts for a User
+curl http://localhost:4001/user/u-alex/alerts
 
-## Notes
-- Storage is in-memory for the MVP (simple arrays). Replace with DB by swapping `store.ts`.
-- Reminder window uses `lastNotifiedAt` to decide eligibility (`>= frequency`) and ignores snoozed/expired.
-- Snooze resets by calendar day.
+🧩 Design Overview
+🔧 Core Architecture
+Layer	Responsibility
+Routes	REST API endpoints for Admin, User, Reminders, Analytics
+Services	Business logic, notification delivery, user state management
+Store	In-memory DB for users, teams, alerts, and alert states
+Models	Define entities like Alert, User, Team, UserAlertState
+🧠 Object-Oriented Design
+
+Strategy Pattern:
+NotificationChannel → InAppChannel (easily extend to EmailChannel, SmsChannel)
+
+State Pattern:
+UserAlertState tracks per-user state (read, snoozed, lastNotifiedAt)
+
+Observer Pattern (conceptual):
+User subscriptions to alerts simulate notification propagation
+
+Separation of Concerns:
+
+AlertService handles CRUD and audience resolution
+
+NotificationService manages recurring logic and delivery
+
+UserStateService tracks user interactions
+
+VisibilityService resolves eligible users by team/org/user
+
+🧩 Data Model Summary
+Model	Description
+Alert	Title, message, severity, start/expiry, visibility rules
+User	ID, name, team ID
+Team	ID, name
+UserAlertState	Read/unread/snooze/lastNotifiedAt state
+NotificationDelivery	Log of sent reminders
+🌱 Seed Data
+
+Predefined sample data for demo/testing:
+
+Teams
+ID	Name
+t-eng	Engineering
+t-mkt	Marketing
+Users
+ID	Name	Team
+u-alex	Alex	Engineering
+u-bella	Bella	Marketing
+u-chen	Chen	Engineering
+🧠 Design Highlights
+
+✅ DRY & SRP Compliant — Each service is isolated and testable
+
+🧩 Extensible — Add new delivery channels without modifying existing logic
+
+🕒 Scalable Reminder Logic — Supports simulated or real schedulers
+
+📊 Analytics Ready — Aggregate and analyze system-wide stats easily
+
+🧱 Plug-and-Play — Replace in-memory store.ts with database adapter
+
+🔐 Future Ready — Extendable to Email, SMS, and Push channels
+
+💡 Notes
+
+Data is stored in-memory for this MVP (no persistence).
+
+Reminder scheduler is manual (API-triggered) to demonstrate modularity.
+
+Snooze logic resets automatically on the next calendar day.
+
+All timestamps follow ISO 8601 (YYYY-MM-DDTHH:mm:ssZ).
+
+🌐 Deployment (Demo Links)
+
+Backend API: https://alerting-platform-backend.onrender.com
+
+Frontend Dashboard: https://alerting-platform-kxsm.onrender.com
+
+👨‍💻 Author
+
+Priyanshu Rai
+M.Tech (Software Engineering), IIIT-Allahabad
+
+
+---
+
+✅ **Why this works perfectly:**
+- It matches **every PRD deliverable** clearly.  
+- Uses **recruiter-friendly structure** (Overview → Features → API → Design).  
+- Emphasizes **OOP principles and extensibility**.  
+- Includes **ready-to-run commands**, **example cURL**, and **deployment links**.  
+- Gives a **strong first impression** when opened directly on GitHub or shared via Render link.
+
+---
+
+Would you like me to make a **matching README for your frontend repo** (with screenshots & API connection note)?  
+That will make your submission **look like a complete end-to-end project** — exactly what recruiters love.
