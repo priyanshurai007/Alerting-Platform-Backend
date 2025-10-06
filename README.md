@@ -1,10 +1,3 @@
-✉️ Final Submission Email (to Sakshi)
-
-Subject:
-✅ Submission — SDE Intern Assignment: Alerting & Notification Platform | Priyanshu Rai
-
-Body:
-
 Dear Sakshi,
 
 Please find below my completed submission for the SDE Intern assignment — *Alerting & Notification Platform*.
@@ -39,7 +32,7 @@ I truly enjoyed building this project!
 Best regards,  
 **Priyanshu Rai**  
 M.Tech (Software Engineering), IIIT-Allahabad  
-📧 priyanshurai0007@gmail.com | 📱 +91-XXXXXXXXXX  
+📧 priyanshurai0007@gmail.com | 📱 +91-6391651439
 GitHub: [github.com/priyanshurai007](https://github.com/priyanshurai007) | LinkedIn: [linkedin.com/in/priyanshurai007](https://linkedin.com/in/priyanshurai007)
 
 🧾 README.md (for your Backend repo)
