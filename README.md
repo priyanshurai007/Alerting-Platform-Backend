@@ -143,7 +143,13 @@ Example Response:
   "expired": 0
 }
 
+
+
+
+
+```bash
 Architecture Overview.
+
 
 src/
 ├── models/                # Core types and interfaces (Alert, User, Team, etc.)
@@ -159,4 +165,3 @@ src/
 │   └── UserStateService.ts    # Tracks read/snooze states
 └── store.ts               # In-memory data store with mock users/teams
 
-```bash
