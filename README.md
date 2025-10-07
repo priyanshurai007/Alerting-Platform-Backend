@@ -1,80 +1,73 @@
-🧠 Alerting & Notification Platform — Backend (MVP)
+# 🧠 Alerting & Notification Platform — Backend (MVP)
 
-A modular TypeScript + Express backend implementing the complete Alerting & Notification Platform per PRD.
-Designed with OOP principles (Strategy, State, and SRP) for clarity, reusability, and extensibility.
+A modular **TypeScript + Express** backend implementing the complete Alerting & Notification Platform per PRD.  
+Designed using **OOP principles** (Strategy, State, and SRP) for clarity, reusability, and extensibility.
 
-🚀 Features Implemented
-👩‍💼 Admin Features
+---
 
-Create, update, and list alerts
+## 🚀 Features Implemented
 
-Configure visibility:
+### 👩‍💼 Admin Features
+- Create, update, and list alerts
+- Configure **visibility**:
+  - Entire organization  
+  - Specific teams  
+  - Specific users
+- Filter alerts by **severity** and **status** (active / expired)
+- Enable or disable recurring reminders (2 hours default)
 
-Entire organization
+### 👤 End-User Features
+- Fetch alerts visible to the logged-in user
+- Mark alerts as **read / unread**
+- **Snooze** alerts for the day (reminders resume next day)
 
-Specific teams
+### ⏰ Reminder Logic
+- Reminds users every **2 hours** until snoozed or expired  
+- `/reminders/trigger` endpoint simulates the recurring scheduler
 
-Specific users
+### 📊 Analytics Dashboard (API)
+- Total alerts created  
+- Alerts delivered vs. read  
+- Snoozed counts per alert  
+- Breakdown by severity (Info / Warning / Critical)  
+- Active vs. expired alert count
 
-Filter alerts by severity and status (active / expired)
+---
 
-Enable or disable recurring reminders (2 hours default)
+## 🧱 Tech Stack
 
-👤 End-User Features
+| Component | Technology |
+|------------|-------------|
+| **Language** | TypeScript |
+| **Framework** | Express.js |
+| **Storage** | In-memory store (seeded users & teams) |
+| **Design Patterns** | Strategy, State, Observer |
+| **Scheduler** | Manual trigger endpoint (`/reminders/trigger`) |
+| **Deployment Ready** | ✅ Compatible with Render / Vercel / Localhost |
 
-Fetch alerts visible to the logged-in user
+---
 
-Mark alerts as read / unread
+## ⚙️ Setup & Usage
 
-Snooze alerts for the day (reminders resume next day)
+### 1️⃣ Clone & Install
 
-⏰ Reminder Logic
-
-Reminds users every 2 hours until snoozed or expired
-
-/reminders/trigger endpoint simulates the recurring scheduler
-
-📊 Analytics Dashboard (API)
-
-Total alerts created
-
-Alerts delivered vs. read
-
-Snoozed counts per alert
-
-Severity breakdown (Info / Warning / Critical)
-
-Active vs. expired alert count
-
-🧱 Tech Stack
-Component	Technology
-Language	TypeScript
-Framework	Express.js
-Storage	In-memory store (seeded users & teams)
-Design Patterns	Strategy, State, Observer
-Scheduler	Manual trigger endpoint (/reminders/trigger)
-Deployment Ready	✅ Compatible with Render / Vercel / Localhost
-⚙️ Setup & Usage
-1️⃣ Clone & Install
 git clone https://github.com/priyanshurai007/Alerting-Platform-Backend.git
 cd Alerting-Platform-Backend
 npm install
 
+
 2️⃣ Run Locally
 npm run dev
+Server will start on 👉 http://localhost:4001
 
-
-Server runs on 👉 http://localhost:4001
 
 3️⃣ Seed Data (Predefined Users & Teams)
 
-This populates mock data for testing visibility.
+Populates mock data for testing visibility.
 
 curl -X POST http://localhost:4001/seed
 
-
-Sample Data Created
-
+✅ Sample Data Created
 {
   "teams": [
     { "id": "t-eng", "name": "Engineering" },
@@ -86,6 +79,8 @@ Sample Data Created
     { "id": "u-chen", "name": "Chen", "teamId": "t-eng" }
   ]
 }
+
+
 
 🧪 API Endpoints (Testable via Postman or cURL)
 🟣 Admin APIs
@@ -148,7 +143,8 @@ Example Response:
   "expired": 0
 }
 
-🧩 Architecture Overview
+Architecture Overview.
+
 src/
 ├── models/                # Core types and interfaces (Alert, User, Team, etc.)
 ├── routes/
@@ -157,32 +153,10 @@ src/
 │   ├── analytics.ts       # Analytics: Aggregated metrics
 │   └── reminders.ts       # Reminder trigger simulation
 ├── services/
-│   ├── AlertService.ts    # Business logic for alerts
+│   ├── AlertService.ts        # Business logic for alerts
 │   ├── NotificationService.ts # Handles recurring reminders
 │   ├── VisibilityService.ts   # Resolves user/team/org audience
 │   └── UserStateService.ts    # Tracks read/snooze states
 └── store.ts               # In-memory data store with mock users/teams
 
-🧠 Design Highlights
-Principle	Implementation
-SRP (Single Responsibility)	Each service handles one concern (Alert, Visibility, UserState, etc.)
-OCP (Open/Closed)	Easily extend channels (Email, SMS) without modifying existing logic
-Strategy Pattern	Used for pluggable delivery channels (InAppChannel, future EmailChannel)
-State Pattern	Manages user-specific alert states (read/unread/snoozed)
-Observer Principle	Users are dynamically resolved for each alert via visibility mapping
-📌 Evaluation-Ready Highlights
-
-✅ Fully modular OOP design
-✅ All required APIs implemented per PRD
-✅ Readable code, easily extensible
-✅ Includes visibility management, reminder logic, analytics
-✅ Pre-seeded test data for immediate testing
-
-🧑‍💻 Author
-
-Priyanshu Rai
-M.Tech (Software Engineering) — IIIT-Allahabad
-📧 priyanshurai0007@gmail.com
-
-🔗 GitHub
- | LinkedIn
+```bash
