@@ -9,43 +9,68 @@ export const user = Router();
 const visibility = new VisibilityService();
 const state = new UserStateService();
 
-// 🧩 Fetch all alerts visible to a specific user
+/**
+ * GET /user/:userId/alerts
+ * Fetches all active and visible alerts for a user
+ */
 user.get("/:userId/alerts", (req, res) => {
   const { userId } = req.params;
   const nowISO = dayjs().toISOString();
 
-  // Only active alerts
-  const activeAlerts = db.alerts.filter((a) => isAlertActive(a, nowISO));
+  console.log(`\n[🔍 FETCH ALERTS] For User: ${userId} at ${nowISO}`);
+  console.log(`[DB] Total alerts stored: ${db.alerts.length}`);
 
-  // Alerts visible to this user
+  // 1️⃣ Filter active alerts
+  const activeAlerts = db.alerts.filter((a) => {
+    const active = isAlertActive(a, nowISO);
+    if (!active)
+      console.log(
+        `🚫 Skipping "${a.title}" — Not active (start=${a.startAt}, end=${a.expiresAt})`
+      );
+    return active;
+  });
+
+  // 2️⃣ Filter alerts visible to this user
   const visibleAlerts = activeAlerts.filter((a) => {
     const userIds = visibility.resolveUsersForAlert(a).map((u) => u.id);
-    return userIds.includes(userId);
+    const visible = userIds.includes(userId);
+    if (!visible)
+      console.log(`👁️  "${a.title}" not visible to user ${userId}`);
+    return visible;
   });
 
-  // Attach user state (read/unread/snooze)
+  // 3️⃣ Attach per-user state (read/unread/snooze)
   const response = visibleAlerts.map((a) => {
     const s = state.getOrCreate(userId, a.id);
-    const visibleTo = visibility.resolveUsersForAlert(a).map((u) => u.id);
-    return { alert: a, state: s, visibleTo }; // ✅ debug who sees what
+    return {
+      alert: a,
+      state: s,
+    };
   });
 
+  console.log(`[✅ Result] Returning ${response.length} visible alerts\n`);
   res.json(response);
 });
 
-// 🟢 Mark alert as read
+/**
+ * POST /user/:userId/alerts/:alertId/read
+ */
 user.post("/:userId/alerts/:alertId/read", (req, res) => {
   const s = state.markRead(req.params.userId, req.params.alertId);
   res.json(s);
 });
 
-// 🔵 Mark alert as unread
+/**
+ * POST /user/:userId/alerts/:alertId/unread
+ */
 user.post("/:userId/alerts/:alertId/unread", (req, res) => {
   const s = state.markUnread(req.params.userId, req.params.alertId);
   res.json(s);
 });
 
-// 🟠 Snooze alert for today
+/**
+ * POST /user/:userId/alerts/:alertId/snooze
+ */
 user.post("/:userId/alerts/:alertId/snooze", (req, res) => {
   const s = state.snoozeToday(req.params.userId, req.params.alertId);
   res.json(s);
